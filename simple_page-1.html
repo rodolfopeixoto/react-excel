@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/build/react.js"> </script>
+    <script src="react/build/react-dom.js"> </script>
+    <script>
+
+    var logMixin = {
+            _log: function(methodName, args){
+              console.log(methodName, args);
+            },
+
+            componentWillUpdate: function(){
+              this._log("componentWillUpdate", arguments);
+            },
+
+
+            componentDidlUpdate: function(oldProps, oldState){
+              if(this.state.text.length > 9){
+                this.replaceState(oldState);
+              }
+              this._log("componentDidlUpdate", arguments);
+            },
+
+            componentDidMount: function(){
+              this._log("componentDidMount", arguments);
+            },
+
+            componentWillMount: function(){
+              this._log("componentWillMount", arguments);
+            },
+
+            componentWillUnmount(){
+              this._log("componentWillUnmount", arguments);
+            },
+          };
+
+
+      var Counter = React.createClass({
+        name: 'Counter',
+        mixins: [logMixin],
+        propTypes: {
+          count: React.PropTypes.number.isRequired,
+        },
+        render: function(){
+          return React.DOM.span(null, this.props.count);
+        }
+      });
+
+
+      var TextAreaCounter = React.createClass({
+
+        name: 'TextAreaCounter',
+        mixins: [logMixin],
+
+            propTypes: {
+              text: React.PropTypes.string,
+            },
+
+            getDefaultProps: function(){
+              return {
+                text: '',
+              };
+            },
+          render: function(){
+            return React.DOM.div(null,
+              React.DOM.textarea({
+                defaultValue: this.props.text,
+              }),
+              React.DOM.h3(null, this.props.text.length)
+            );
+          },
+
+
+                  getInitialState: function(){
+                    return {
+                      text: this.props.text,
+                    };
+                  },
+
+                  _textChange: function(event){
+                    this.setState({
+                      text: event.target.value,
+                    });
+                  },
+
+                  render: function(){
+                    var counter = null;
+
+                    if(this.state.text.length > 0){
+                      counter = React.DOM.h3(null,
+                        React.createElement(Counter, {
+                          count: this.state.text.length
+                        })
+                      );
+                    }
+
+                    return React.DOM.div(null,
+                      React.DOM.textarea({
+                        value: this.state.text,
+                        onChange: this._textChange,
+                      }),
+                      counter
+                    );
+                  }
+        });
+
+      ReactDOM.render(
+        React.createElement(TextAreaCounter, {
+           text: "Rodolfo",
+        }),
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>
